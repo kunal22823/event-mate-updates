@@ -137,6 +137,107 @@ exports.markAttendance = async (req, res) => {
   }
 };
 
+// POST /api/registrations/:id/check-in
+exports.checkIn = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const registration = await Registration.findById(id).populate('eventId');
+    if (!registration) {
+      return res.status(404).json({ message: 'Registration not found.' });
+    }
+
+    // Check if event is still ongoing
+    const event = registration.eventId;
+    const now = new Date();
+    if (now < new Date(event.eventDateTime)) {
+      return res.status(400).json({ message: 'Event has not started yet.' });
+    }
+
+    if (registration.checkInTime) {
+      return res.status(400).json({ message: 'You have already checked in for this event.' });
+    }
+
+    registration.checkInTime = now;
+    await registration.save();
+
+    res.json({ message: 'Check-in successful', registration });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error during check-in.', error: error.message });
+  }
+};
+
+// PUT /api/registrations/:id/attendance (updated with duration tracking)
+exports.markAttendanceWithDuration = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { attendanceStatus, participationDuration = 0, notes = null } = req.body;
+
+    if (!['Present', 'Absent'].includes(attendanceStatus)) {
+      return res.status(400).json({ message: 'Attendance status must be "Present" or "Absent".' });
+    }
+
+    const registration = await Registration.findById(id).populate('eventId').populate('studentId', 'name email');
+
+    if (!registration) {
+      return res.status(404).json({ message: 'Registration not found.' });
+    }
+
+    // Check authorization
+    const event = await Event.findById(registration.eventId._id);
+    if (req.user.role === 'member' && event.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to mark attendance for this event.' });
+    }
+
+    const previousStatus = registration.attendanceStatus;
+    registration.attendanceStatus = attendanceStatus;
+    registration.participated = attendanceStatus === 'Present';
+    registration.participationDuration = participationDuration;
+    registration.notes = notes;
+    registration.updatedAt = new Date();
+
+    // Credit logic: safe & idempotent
+    if (attendanceStatus === 'Present' && !registration.creditsAssigned && event.credits) {
+      await User.findByIdAndUpdate(registration.studentId._id, {
+        $inc: { totalCredits: event.credits },
+      });
+      registration.creditsAssigned = true;
+    } else if (attendanceStatus === 'Absent' && registration.creditsAssigned && event.credits) {
+      await User.findByIdAndUpdate(registration.studentId._id, {
+        $inc: { totalCredits: -event.credits },
+      });
+      registration.creditsAssigned = false;
+    }
+
+    await registration.save();
+
+    // Update event statistics
+    const presentCount = await Registration.countDocuments({ eventId: event._id, attendanceStatus: 'Present' });
+    const absentCount = await Registration.countDocuments({ eventId: event._id, attendanceStatus: 'Absent' });
+    const totalCount = await Registration.countDocuments({ eventId: event._id });
+
+    const attendanceRate = totalCount > 0 ? Math.round((presentCount / totalCount) * 100) : 0;
+
+    await Event.findByIdAndUpdate(event._id, {
+      totalPresent: presentCount,
+      totalAbsent: absentCount,
+      totalRegistrations: totalCount,
+      attendanceRate,
+      updatedAt: new Date(),
+    });
+
+    // Send attendance confirmation if marked present
+    if (attendanceStatus === 'Present') {
+      const template = emailTemplates.attendanceConfirmation(event, registration.studentId.name);
+      sendEmail(registration.studentId.email, template.subject, template.html);
+    }
+
+    res.json(registration);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error marking attendance.', error: error.message });
+  }
+};
+
 // GET /api/registrations/stats/me
 exports.getMyStats = async (req, res) => {
   try {
@@ -163,5 +264,51 @@ exports.getMyStats = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error fetching stats.', error: error.message });
+  }
+};
+
+// GET /api/registrations/event/:eventId/detailed-stats
+exports.getEventDetailedStats = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+
+    // Check authorization
+    if (req.user.role === 'member' && event.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to view event statistics.' });
+    }
+
+    const registrations = await Registration.find({ eventId }).populate('studentId', 'name email course year');
+
+    const presentCount = registrations.filter((r) => r.attendanceStatus === 'Present').length;
+    const absentCount = registrations.filter((r) => r.attendanceStatus === 'Absent').length;
+    const notMarkedCount = registrations.filter((r) => r.attendanceStatus === 'Not Marked').length;
+
+    const attendanceRate = registrations.length > 0 ? Math.round((presentCount / registrations.length) * 100) : 0;
+    const avgParticipationDuration = registrations.length > 0
+      ? Math.round(registrations.reduce((sum, r) => sum + r.participationDuration, 0) / registrations.length)
+      : 0;
+
+    const certificatesIssued = registrations.filter((r) => r.certificateIssued).length;
+    const totalCreditsDistributed = registrations.reduce((sum, r) => (r.creditsAssigned ? sum + (event.credits || 0) : sum), 0);
+
+    res.json({
+      eventTitle: event.title,
+      totalRegistrations: registrations.length,
+      presentCount,
+      absentCount,
+      notMarkedCount,
+      attendanceRate,
+      avgParticipationDuration,
+      certificatesIssued,
+      totalCreditsDistributed,
+      registrations,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error fetching event statistics.', error: error.message });
   }
 };

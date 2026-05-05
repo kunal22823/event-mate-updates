@@ -18,12 +18,15 @@ import MemberDashboard from './pages/member/MemberDashboard'
 import AddEvent from './pages/member/AddEvent'
 import MemberMyEvents from './pages/member/MemberMyEvents'
 import EventDetail from './pages/member/EventDetail'
+import ExportData from './pages/member/ExportData'
 
 // Admin pages
 import AdminDashboard from './pages/admin/AdminDashboard'
 import ManageEvents from './pages/admin/ManageEvents'
 import ManageMembers from './pages/admin/ManageMembers'
 import ManageStudents from './pages/admin/ManageStudents'
+import EventAnalytics from './pages/admin/EventAnalytics'
+import StudentAnalytics from './pages/admin/StudentAnalytics'
 
 export default function App() {
   return (
@@ -50,6 +53,7 @@ export default function App() {
           <Route path="/member/add-event" element={<AddEvent />} />
           <Route path="/member/my-events" element={<MemberMyEvents />} />
           <Route path="/member/events/:id" element={<EventDetail />} />
+          <Route path="/member/export" element={<ExportData />} />
         </Route>
       </Route>
 
@@ -60,6 +64,8 @@ export default function App() {
           <Route path="/admin/events" element={<ManageEvents />} />
           <Route path="/admin/members" element={<ManageMembers />} />
           <Route path="/admin/students" element={<ManageStudents />} />
+          <Route path="/admin/analytics/events" element={<EventAnalytics />} />
+          <Route path="/admin/analytics/students" element={<StudentAnalytics />} />
         </Route>
       </Route>
     </Routes>

@@ -11,6 +11,8 @@ import {
   BarChart3,
   Shield,
   X,
+  Download,
+  TrendingUp,
 } from 'lucide-react'
 
 const navItems = {
@@ -24,12 +26,15 @@ const navItems = {
     { to: '/member', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/member/add-event', icon: PlusCircle, label: 'Add Event' },
     { to: '/member/my-events', icon: FolderOpen, label: 'My Events' },
+    { to: '/member/export', icon: Download, label: 'Export Data' },
   ],
   superadmin: [
     { to: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/admin/events', icon: CalendarDays, label: 'Manage Events' },
     { to: '/admin/members', icon: Shield, label: 'Manage Members' },
     { to: '/admin/students', icon: Users, label: 'Manage Students' },
+    { to: '/admin/analytics/events', icon: BarChart3, label: 'Event Analytics' },
+    { to: '/admin/analytics/students', icon: TrendingUp, label: 'Student Analytics' },
   ],
 }
 

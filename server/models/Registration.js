@@ -28,8 +28,34 @@ const registrationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  checkInTime: {
+    type: Date,
+    default: null,
+  },
+  participationDuration: {
+    type: Number,
+    default: 0,
+  },
+  certificateIssued: {
+    type: Boolean,
+    default: false,
+  },
+  certificateIssuedAt: {
+    type: Date,
+    default: null,
+  },
+  notes: {
+    type: String,
+    default: null,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 registrationSchema.index({ studentId: 1, eventId: 1 }, { unique: true });
+registrationSchema.index({ eventId: 1, attendanceStatus: 1 });
+registrationSchema.index({ studentId: 1, participated: 1 });
 
 module.exports = mongoose.model('Registration', registrationSchema);

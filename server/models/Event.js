@@ -46,6 +46,47 @@ const eventSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  totalRegistrations: {
+    type: Number,
+    default: 0,
+  },
+  totalPresent: {
+    type: Number,
+    default: 0,
+  },
+  totalAbsent: {
+    type: Number,
+    default: 0,
+  },
+  totalParticipated: {
+    type: Number,
+    default: 0,
+  },
+  attendanceRate: {
+    type: Number,
+    default: 0,
+  },
+  maxCapacity: {
+    type: Number,
+    default: null,
+  },
+  status: {
+    type: String,
+    enum: ['upcoming', 'ongoing', 'completed'],
+    default: 'upcoming',
+  },
+  eventEndDateTime: {
+    type: Date,
+    default: null,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
+
+eventSchema.index({ createdBy: 1, status: 1 });
+eventSchema.index({ committeeName: 1 });
+eventSchema.index({ eventDateTime: 1 });
 
 module.exports = mongoose.model('Event', eventSchema);
