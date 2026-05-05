@@ -1,0 +1,26 @@
+{
+  "name": "event-mate",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Event Mate - College Event Management System (MERN Stack)",
+  "scripts": {
+    "install-all": "cd server && npm install && cd ../client && npm install",
+    "server": "cd server && npm start",
+    "client": "cd client && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^0.576.0",
+    "mongoose": "^9.2.3",
+    "nodemailer": "^8.0.1",
+    "react": "^19.2.4",
+    "react-hot-toast": "^2.6.0",
+    "react-router-dom": "^7.13.1"
+  }
+}
