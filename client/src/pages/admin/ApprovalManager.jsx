@@ -10,7 +10,6 @@ export default function ApprovalManager() {
   const [activeTab, setActiveTab] = useState('pending')
   const [loading, setLoading] = useState(true)
   const [processingId, setProcessingId] = useState(null)
-  const [creditsForm, setCreditsForm] = useState({})
 
   useEffect(() => {
     fetchApprovals()
@@ -63,26 +62,6 @@ export default function ApprovalManager() {
     }
   }
 
-  const handleUpdateCredits = async (userId) => {
-    try {
-      const credits = creditsForm[userId]
-      if (credits === undefined || credits === '') {
-        alert('Please enter a valid credits value')
-        return
-      }
-      await apiClient.patch(`/approvals/${userId}/credits`, {
-        remainingCredits: parseInt(credits, 10),
-      })
-      setApprovedUsers(
-        approvedUsers.map((u) => (u._id === userId ? { ...u, remainingCredits: parseInt(credits, 10) } : u))
-      )
-      setCreditsForm({ ...creditsForm, [userId]: '' })
-    } catch (error) {
-      console.error('Failed to update credits:', error)
-      alert('Failed to update credits')
-    }
-  }
-
   if (loading) return <LoadingSpinner />
 
   const renderUserTable = (users, showActions = true) => (
@@ -94,9 +73,6 @@ export default function ApprovalManager() {
             <th className="text-left px-6 py-3 text-sm font-semibold text-slate-900">Email</th>
             <th className="text-left px-6 py-3 text-sm font-semibold text-slate-900">Course</th>
             <th className="text-left px-6 py-3 text-sm font-semibold text-slate-900">Year</th>
-            {activeTab === 'approved' && (
-              <th className="text-left px-6 py-3 text-sm font-semibold text-slate-900">Remaining Credits</th>
-            )}
             {showActions && <th className="text-center px-6 py-3 text-sm font-semibold text-slate-900">Actions</th>}
           </tr>
         </thead>
@@ -114,26 +90,6 @@ export default function ApprovalManager() {
                 <td className="px-6 py-4 text-sm text-slate-600">{user.email}</td>
                 <td className="px-6 py-4 text-sm text-slate-600">{user.course || '-'}</td>
                 <td className="px-6 py-4 text-sm text-slate-600">{user.year || '-'}</td>
-                {activeTab === 'approved' && (
-                  <td className="px-6 py-4 text-sm text-slate-600">
-                    <div className="flex gap-2">
-                      <input
-                        type="number"
-                        value={creditsForm[user._id] || user.remainingCredits || 0}
-                        onChange={(e) =>
-                          setCreditsForm({ ...creditsForm, [user._id]: e.target.value })
-                        }
-                        className="w-20 px-2 py-1 border border-slate-300 rounded text-sm"
-                      />
-                      <button
-                        onClick={() => handleUpdateCredits(user._id)}
-                        className="text-xs px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                      >
-                        Update
-                      </button>
-                    </div>
-                  </td>
-                )}
                 {showActions && activeTab === 'pending' && (
                   <td className="px-6 py-4 text-center">
                     <div className="flex gap-2 justify-center">

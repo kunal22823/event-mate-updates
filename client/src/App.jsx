@@ -15,6 +15,9 @@ import Profile from './pages/student/Profile'
 
 // Member pages
 import UnifiedDashboard from './pages/member/UnifiedDashboard'
+import MemberBrowseEvents from './pages/member/BrowseEvents'
+import ParticipatedEvents from './pages/member/ParticipatedEvents'
+import MemberProfile from './pages/member/Profile'
 import AddEvent from './pages/member/AddEvent'
 import MemberMyEvents from './pages/member/MemberMyEvents'
 import EventDetail from './pages/member/EventDetail'
@@ -51,6 +54,9 @@ export default function App() {
       <Route element={<AuthGuard roles={['member']} />}>
         <Route element={<Layout />}>
           <Route path="/member" element={<UnifiedDashboard />} />
+          <Route path="/member/browse" element={<MemberBrowseEvents />} />
+          <Route path="/member/participated" element={<ParticipatedEvents />} />
+          <Route path="/member/profile" element={<MemberProfile />} />
           <Route path="/member/add-event" element={<AddEvent />} requireApproved={true} />
           <Route path="/member/my-events" element={<MemberMyEvents />} requireApproved={true} />
           <Route path="/member/events/:id" element={<EventDetail />} />

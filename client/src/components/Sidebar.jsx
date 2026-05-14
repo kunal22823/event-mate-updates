@@ -25,9 +25,12 @@ const navItems = {
   ],
   member: [
     { to: '/member', icon: LayoutDashboard, label: 'Dashboard', requiresApproval: false },
+    { to: '/member/browse', icon: CalendarDays, label: 'Browse Events', requiresApproval: false },
+    { to: '/member/participated', icon: CalendarCheck, label: 'Participated Events', requiresApproval: false },
+    { to: '/member/profile', icon: UserCircle, label: 'Profile', requiresApproval: false },
+    { to: '/member/my-events', icon: FolderOpen, label: 'My Created Events', requiresApproval: true },
     { to: '/member/add-event', icon: PlusCircle, label: 'Add Event', requiresApproval: true },
-    { to: '/member/my-events', icon: FolderOpen, label: 'My Events', requiresApproval: true },
-    { to: '/member/export', icon: Download, label: 'Export Data', requiresApproval: true },
+    { to: '/member/export', icon: Download, label: 'Export Participants', requiresApproval: true },
   ],
   superadmin: [
     { to: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
