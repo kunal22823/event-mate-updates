@@ -14,7 +14,7 @@ import StudentMyEvents from './pages/student/MyEvents'
 import Profile from './pages/student/Profile'
 
 // Member pages
-import MemberDashboard from './pages/member/MemberDashboard'
+import UnifiedDashboard from './pages/member/UnifiedDashboard'
 import AddEvent from './pages/member/AddEvent'
 import MemberMyEvents from './pages/member/MemberMyEvents'
 import EventDetail from './pages/member/EventDetail'
@@ -48,13 +48,13 @@ export default function App() {
       </Route>
 
       {/* Committee Member routes */}
-      <Route element={<AuthGuard roles={['member']} requireApproved={true} />}>
+      <Route element={<AuthGuard roles={['member']} />}>
         <Route element={<Layout />}>
-          <Route path="/member" element={<MemberDashboard />} />
-          <Route path="/member/add-event" element={<AddEvent />} />
-          <Route path="/member/my-events" element={<MemberMyEvents />} />
+          <Route path="/member" element={<UnifiedDashboard />} />
+          <Route path="/member/add-event" element={<AddEvent />} requireApproved={true} />
+          <Route path="/member/my-events" element={<MemberMyEvents />} requireApproved={true} />
           <Route path="/member/events/:id" element={<EventDetail />} />
-          <Route path="/member/export" element={<ExportData />} />
+          <Route path="/member/export" element={<ExportData />} requireApproved={true} />
         </Route>
       </Route>
 

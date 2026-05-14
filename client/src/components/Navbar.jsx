@@ -1,5 +1,6 @@
 import { useAuth } from '../context/AuthContext'
 import { LogOut, Menu, CalendarDays } from 'lucide-react'
+import ApprovalStatus from './ApprovalStatus'
 
 export default function Navbar({ onToggleSidebar }) {
   const { user, logout } = useAuth()
@@ -38,6 +39,7 @@ export default function Navbar({ onToggleSidebar }) {
             <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${roleBadgeColors[user.role]}`}>
               {roleLabels[user.role]}
             </span>
+            {user.role === 'member' && <ApprovalStatus />}
             <span className="text-sm text-slate-600 hidden sm:block">{user.name}</span>
             <button
               onClick={logout}

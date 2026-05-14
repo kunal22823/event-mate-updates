@@ -24,10 +24,10 @@ const navItems = {
     { to: '/student/profile', icon: UserCircle, label: 'Profile' },
   ],
   member: [
-    { to: '/member', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/member/add-event', icon: PlusCircle, label: 'Add Event' },
-    { to: '/member/my-events', icon: FolderOpen, label: 'My Events' },
-    { to: '/member/export', icon: Download, label: 'Export Data' },
+    { to: '/member', icon: LayoutDashboard, label: 'Dashboard', requiresApproval: false },
+    { to: '/member/add-event', icon: PlusCircle, label: 'Add Event', requiresApproval: true },
+    { to: '/member/my-events', icon: FolderOpen, label: 'My Events', requiresApproval: true },
+    { to: '/member/export', icon: Download, label: 'Export Data', requiresApproval: true },
   ],
   superadmin: [
     { to: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
@@ -74,24 +74,38 @@ export default function Sidebar({ isOpen, onClose }) {
         </div>
 
         <nav className="p-4 space-y-1">
-          {items.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === '/student' || item.to === '/member' || item.to === '/admin'}
-              onClick={onClose}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                }`
-              }
-            >
-              <item.icon size={18} />
-              {item.label}
-            </NavLink>
-          ))}
+          {items.map((item) => {
+            const isDisabled = item.requiresApproval && user?.role === 'member' && !user?.committeeApproved
+            
+            return isDisabled ? (
+              <button
+                key={item.to}
+                disabled
+                className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 cursor-not-allowed opacity-60"
+                title="Requires committee approval"
+              >
+                <item.icon size={18} />
+                {item.label}
+              </button>
+            ) : (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/student' || item.to === '/member' || item.to === '/admin'}
+                onClick={onClose}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-primary-50 text-primary-700'
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  }`
+                }
+              >
+                <item.icon size={18} />
+                {item.label}
+              </NavLink>
+            )
+          })}
         </nav>
       </aside>
     </>

@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const { sendEmail, emailTemplates } = require('../utils/emailService');
 
 // GET /api/admin/approvals/pending
 exports.getPendingApprovals = async (req, res) => {
@@ -66,8 +67,12 @@ exports.approveMember = async (req, res) => {
 
     await user.save();
 
+    // Send approval email to member
+    const approvalEmail = emailTemplates.membershipApproved(user.name, remainingCredits);
+    await sendEmail(user.email, approvalEmail.subject, approvalEmail.html);
+
     res.json({
-      message: 'Member approved successfully.',
+      message: 'Member approved successfully. Confirmation email sent.',
       user,
     });
   } catch (error) {
@@ -98,8 +103,12 @@ exports.rejectMember = async (req, res) => {
 
     await user.save();
 
+    // Send rejection email to member
+    const rejectionEmail = emailTemplates.membershipRejected(user.name, reason);
+    await sendEmail(user.email, rejectionEmail.subject, rejectionEmail.html);
+
     res.json({
-      message: 'Member rejected successfully.',
+      message: 'Member rejected successfully. Notification email sent.',
       user,
     });
   } catch (error) {

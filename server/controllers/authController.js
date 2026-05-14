@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { isValidSIESEmail } = require('../utils/validators');
+const { sendEmail, emailTemplates } = require('../utils/emailService');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -38,6 +39,14 @@ exports.register = async (req, res) => {
       year: year || '',
     });
 
+    // Send notification to admin if committee member signup
+    if (userRole === 'member') {
+      const adminEmail = process.env.ADMIN_EMAIL || 'admin@eventmate.com';
+      const approvalLink = `${process.env.APP_URL || 'http://localhost:5173'}/admin/approvals`;
+      const notificationEmail = emailTemplates.committeeMembershipRequest(user.name, approvalLink);
+      await sendEmail(adminEmail, notificationEmail.subject, notificationEmail.html);
+    }
+
     const token = generateToken(user._id);
 
     res.status(201).json({
@@ -50,6 +59,8 @@ exports.register = async (req, res) => {
         course: user.course,
         year: user.year,
         totalCredits: user.totalCredits || 0,
+        committeeApproved: user.committeeApproved,
+        committeeStatus: user.committeeStatus,
       },
     });
   } catch (error) {
@@ -91,6 +102,9 @@ exports.login = async (req, res) => {
         course: user.course,
         year: user.year,
         totalCredits: user.totalCredits || 0,
+        remainingCredits: user.remainingCredits || 0,
+        committeeApproved: user.committeeApproved || false,
+        committeeStatus: user.committeeStatus || 'pending',
       },
     });
   } catch (error) {
@@ -110,6 +124,9 @@ exports.getMe = async (req, res) => {
         course: req.user.course,
         year: req.user.year,
         totalCredits: req.user.totalCredits || 0,
+        remainingCredits: req.user.remainingCredits || 0,
+        committeeApproved: req.user.committeeApproved || false,
+        committeeStatus: req.user.committeeStatus || 'pending',
       },
     });
   } catch (error) {
