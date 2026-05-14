@@ -5,14 +5,14 @@ const transporter = nodemailer.createTransport({
   service: process.env.EMAIL_SERVICE || 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
 // Helper function to send emails
 const sendEmail = async (to, subject, html) => {
   try {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
       console.warn('[Email] Email credentials not configured. Skipping email send.');
       return { success: false, message: 'Email service not configured' };
     }
@@ -51,7 +51,6 @@ const emailTemplates = {
       <h2>Welcome to the Committee!</h2>
       <p>Dear ${userName},</p>
       <p>Your committee membership has been approved! You now have full access to all committee features.</p>
-      <p><strong>Remaining Credits:</strong> ${credits}</p>
       <p>You can now:</p>
       <ul>
         <li>Create and manage events</li>
