@@ -1,35 +1,146 @@
-# v0-event-mate-updates
+# EventMate 🎉
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+EventMate is a MERN-stack based college event management system designed to simplify event handling and communication between committee members and students.
 
-## Built with v0
+The platform allows committee members to create and manage events, while students can view upcoming events, register for them, and receive email notifications so they never miss important college activities.
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+Additionally, the system helps track and manage student participation credits earned through events. Committee members can also export student and event data for reporting and management purposes.
+---
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_9fhXtiUKYfwiNsLjYkqXbwV14AlJ)
+# 🚀 Features
 
-## Getting Started
+- Admin/Committee Event Management
+- Student Registration & Login
+- Add, Update & Delete Events
+- Event Posters/Image Upload
+- Email Notifications to Students
+- Student Event Registration
+- Super Admin Role Management
+- Responsive UI
 
-First, run the development server:
+---
+
+# 🛠️ Tech Stack
+
+## Frontend
+- React.js
+- Vite
+- Tailwind CSS
+
+## Backend
+- Node.js
+- Express.js
+- MongoDB
+- Firebase Storage
+- Nodemailer
+
+---
+
+# 📂 Project Setup
+
+## 1️⃣ Clone Repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+git clone https://github.com/your-username/eventmate.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# ⚛️ Frontend Setup
 
-## Learn More
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-To learn more, take a look at the following resources:
+Frontend will run on:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+```bash
+http://localhost:5173
+```
 
-<a href="https://v0.app/chat/api/kiro/clone/kunal22823/v0-event-mate-updates" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
+---
+
+# 🔥 Backend Setup
+
+```bash
+cd backend
+npm install
+nodemon index.js
+```
+
+Backend will run on:
+
+```bash
+http://localhost:4000
+```
+
+---
+
+# 👑 Super Admin Setup
+
+To make a user Super Admin:
+
+Go to MongoDB database and change the user's role manually.
+
+Example:
+
+```json
+{
+  "role": "superadmin"
+}
+```
+
+You can update it directly from MongoDB Compass or MongoDB Atlas.
+
+---
+
+# 🔐 Environment Variables
+
+Create `.env` file inside backend folder.
+
+Example:
+
+```env
+MONGODB_URI=your_mongodb_uri
+JWT_SECRET=your_secret_key
+EMAIL_USER=your_email
+EMAIL_PASS=your_password
+```
+
+---
+
+# 📁 Folder Structure
+
+```bash
+EventMate/
+│
+├── frontend/
+├── backend/
+│
+├── uploads/
+├── package.json
+└── README.md
+```
+
+---
+
+# 📸 Main Modules
+
+- Authentication System
+- Event Management
+- Student Dashboard
+- Committee Dashboard
+- Super Admin Panel
+- Email Notification System
+
+---
+
+# 📌 Future Improvements
+
+- Certificate Generation
+- Mobile Application
+
+
+---
