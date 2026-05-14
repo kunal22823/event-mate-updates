@@ -13,6 +13,7 @@ import {
   X,
   Download,
   TrendingUp,
+  CheckCircle,
 } from 'lucide-react'
 
 const navItems = {
@@ -30,6 +31,7 @@ const navItems = {
   ],
   superadmin: [
     { to: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
+    { to: '/admin/approvals', icon: CheckCircle, label: 'Member Approvals' },
     { to: '/admin/events', icon: CalendarDays, label: 'Manage Events' },
     { to: '/admin/members', icon: Shield, label: 'Manage Members' },
     { to: '/admin/students', icon: Users, label: 'Manage Students' },

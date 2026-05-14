@@ -13,6 +13,27 @@ exports.registerForEvent = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
 
+    const user = await User.findById(req.user._id);
+
+    // Validation: Event creator cannot register for their own event
+    if (event.createdBy.toString() === req.user._id.toString()) {
+      return res.status(400).json({ message: 'You cannot register for your own event.' });
+    }
+
+    // Validation: Only students and approved committee members can register
+    if (user.role === 'student' || (user.role === 'member' && user.committeeApproved)) {
+      // Check if registration is past event time
+      const now = new Date();
+      if (now > new Date(event.eventDateTime)) {
+        return res.status(400).json({ message: 'Event has already started. Registration is closed.' });
+      }
+    } else if (user.role === 'member' && !user.committeeApproved) {
+      return res.status(403).json({
+        message: 'Your committee membership is pending approval. Please wait for admin approval before registering.',
+        status: user.committeeStatus,
+      });
+    }
+
     // Check if already registered
     const existing = await Registration.findOne({
       studentId: req.user._id,
@@ -23,10 +44,51 @@ exports.registerForEvent = async (req, res) => {
       return res.status(400).json({ message: 'You are already registered for this event.' });
     }
 
+    // Check capacity if set
+    if (event.maxCapacity && event.totalRegistrations >= event.maxCapacity) {
+      return res.status(400).json({ message: 'Event has reached maximum capacity.' });
+    }
+
     const registration = await Registration.create({
       studentId: req.user._id,
       eventId,
+      userRole: user.role,
+      committeeName: user.role === 'member' ? event.committeeName : null,
     });
+
+    // Update event participant counts and list
+    const participantEntry = {
+      userId: req.user._id,
+      userRole: user.role,
+      course: user.course || null,
+      year: user.year || null,
+      attendanceStatus: 'Not Marked',
+    };
+
+    if (user.role === 'student') {
+      // Determine course for counting
+      if (user.course === 'MCA') {
+        await Event.findByIdAndUpdate(eventId, {
+          $inc: { MCA_count: 1, totalRegistrations: 1 },
+          $push: { participantsList: participantEntry },
+        });
+      } else if (user.course === 'MMS') {
+        await Event.findByIdAndUpdate(eventId, {
+          $inc: { MMS_count: 1, totalRegistrations: 1 },
+          $push: { participantsList: participantEntry },
+        });
+      } else {
+        await Event.findByIdAndUpdate(eventId, {
+          $inc: { totalRegistrations: 1 },
+          $push: { participantsList: participantEntry },
+        });
+      }
+    } else if (user.role === 'member') {
+      await Event.findByIdAndUpdate(eventId, {
+        $inc: { committeeParticipantCount: 1, totalRegistrations: 1 },
+        $push: { participantsList: participantEntry },
+      });
+    }
 
     // Send confirmation email
     const template = emailTemplates.registrationConfirmation(event, req.user.name);

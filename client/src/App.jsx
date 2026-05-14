@@ -27,6 +27,7 @@ import ManageMembers from './pages/admin/ManageMembers'
 import ManageStudents from './pages/admin/ManageStudents'
 import EventAnalytics from './pages/admin/EventAnalytics'
 import StudentAnalytics from './pages/admin/StudentAnalytics'
+import ApprovalManager from './pages/admin/ApprovalManager'
 
 export default function App() {
   return (
@@ -47,7 +48,7 @@ export default function App() {
       </Route>
 
       {/* Committee Member routes */}
-      <Route element={<AuthGuard roles={['member']} />}>
+      <Route element={<AuthGuard roles={['member']} requireApproved={true} />}>
         <Route element={<Layout />}>
           <Route path="/member" element={<MemberDashboard />} />
           <Route path="/member/add-event" element={<AddEvent />} />
@@ -64,6 +65,7 @@ export default function App() {
           <Route path="/admin/events" element={<ManageEvents />} />
           <Route path="/admin/members" element={<ManageMembers />} />
           <Route path="/admin/students" element={<ManageStudents />} />
+          <Route path="/admin/approvals" element={<ApprovalManager />} />
           <Route path="/admin/analytics/events" element={<EventAnalytics />} />
           <Route path="/admin/analytics/students" element={<StudentAnalytics />} />
         </Route>

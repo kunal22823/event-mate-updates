@@ -33,11 +33,6 @@ const eventSchema = new mongoose.Schema({
     required: [true, 'Committee name is required'],
     trim: true,
   },
-  registrationLink: {
-    type: String,
-    trim: true,
-    default: null,
-  },
   credits: {
     type: Number,
     default: null,
@@ -79,6 +74,37 @@ const eventSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  MCA_count: {
+    type: Number,
+    default: 0,
+  },
+  MMS_count: {
+    type: Number,
+    default: 0,
+  },
+  committeeParticipantCount: {
+    type: Number,
+    default: 0,
+  },
+  participantsList: [
+    {
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      userRole: {
+        type: String,
+        enum: ['student', 'member'],
+      },
+      course: String,
+      year: String,
+      attendanceStatus: {
+        type: String,
+        enum: ['Present', 'Absent', 'Not Marked'],
+        default: 'Not Marked',
+      },
+    },
+  ],
   updatedAt: {
     type: Date,
     default: Date.now,

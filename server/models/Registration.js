@@ -28,6 +28,15 @@ const registrationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  userRole: {
+    type: String,
+    enum: ['student', 'member'],
+    required: true,
+  },
+  committeeName: {
+    type: String,
+    default: null,
+  },
   checkInTime: {
     type: Date,
     default: null,

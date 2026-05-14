@@ -41,11 +41,40 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  remainingCredits: {
+    type: Number,
+    default: 0,
+  },
+  committeeApproved: {
+    type: Boolean,
+    default: false,
+  },
+  committeeStatus: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending',
+  },
+  approvedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null,
+  },
+  committeeApprovalDate: {
+    type: Date,
+    default: null,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
+
+userSchema.index({ committeeStatus: 1, role: 1 });
+userSchema.index({ email: 1 });
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();

@@ -11,6 +11,7 @@ const registrationRoutes = require('./routes/registrationRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 const exportRoutes = require('./routes/exportRoutes');
+const approvalRoutes = require('./routes/approvalRoutes');
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use('/api/registrations', registrationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/export', exportRoutes);
+app.use('/api/approvals', approvalRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
