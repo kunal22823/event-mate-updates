@@ -127,7 +127,7 @@ export default function BrowseEvents() {
                   event={event}
                   isRegistered={registered}
                   isOwnEvent={isOwn}
-                  onRegister={handleRegister}
+                  onRegister={!isOwn ? handleRegister : null}
                   registering={registering === event._id}
                 />
               </div>

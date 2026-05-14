@@ -1,6 +1,6 @@
-import { Calendar, MapPin, User, Award, Building2 } from 'lucide-react'
+import { Calendar, MapPin, User, Award, Building2, LogIn } from 'lucide-react'
 
-export default function EventCard({ event, actionButton, showCreator = false }) {
+export default function EventCard({ event, actionButton, showCreator = false, isRegistered = false, isOwnEvent = false, onRegister = null, registering = false }) {
   const eventDate = new Date(event.eventDateTime)
   const isPast = eventDate < new Date()
   const imageUrl = event.image
@@ -80,7 +80,22 @@ export default function EventCard({ event, actionButton, showCreator = false }) 
           )}
         </div>
 
-        {actionButton && <div className="mt-auto">{actionButton}</div>}
+        {actionButton ? (
+          <div className="mt-auto">{actionButton}</div>
+        ) : onRegister && !isOwnEvent ? (
+          <button
+            onClick={() => onRegister(event._id)}
+            disabled={isRegistered || registering}
+            className={`mt-auto w-full py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors ${
+              isRegistered
+                ? 'bg-slate-100 text-slate-600 cursor-default'
+                : 'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800'
+            } ${registering ? 'opacity-70 cursor-not-allowed' : ''}`}
+          >
+            <LogIn size={16} />
+            {isRegistered ? 'Registered' : registering ? 'Registering...' : 'Register'}
+          </button>
+        ) : null}
       </div>
     </div>
   )
