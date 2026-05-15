@@ -21,7 +21,7 @@ exports.registerForEvent = async (req, res) => {
     }
 
     // Validation: Only students and approved committee members can register
-    if (user.role === 'student' || (user.role === 'member' && user.committeeApproved)) {
+    if (user.role === 'student' || (user.role === 'member')) {
       // Check if registration is past event time
       const now = new Date();
       if (now > new Date(event.eventDateTime)) {
