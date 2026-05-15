@@ -31,7 +31,6 @@ Additionally, the system helps track and manage student participation credits ea
 - Node.js
 - Express.js
 - MongoDB
-- Firebase Storage
 - Nodemailer
 
 ---
